@@ -212,3 +212,6 @@ Once your dubbed video is saved to your preferred storage (Drive, Dropbox, Mega,
    Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Programs\Python" -ErrorAction SilentlyContinue
    Remove-Item -Recurse -Force "$env:APPDATA\Python" -ErrorAction SilentlyContinue
     ```
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/aladinetk)
+[![Liberapay](https://img.shields.io/badge/Liberapay-Donate-F6C915?style=for-the-badge&logo=liberapay&logoColor=black)](https://liberapay.com/AladineTK/)
