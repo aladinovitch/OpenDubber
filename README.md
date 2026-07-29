@@ -1,29 +1,7 @@
 # Open-Dubber — Lightweight Local Video Dubbing Pipeline
-A fast, zero-cloud-cost workflow to translate and dub videos locally using **Kokoro ONNX** for speech synthesis and **FFmpeg** for audio-video merging.
+A fast, free workflow to translate and dub videos using **Kokoro ONNX** for speech synthesis and **FFmpeg** for audio-video merging.
 
-## 🛠️ Quick Installation (Windows)
-
-Open **PowerShell** (or Command Prompt) and run the following commands:
-### 1. System Dependencies
-Install Python and FFmpeg automatically via Windows Package Manager:
-```powershell
-winget install Python.PythonInstallManager FFmpeg
-```
-Note: After running this, if `python` or `ffmpeg` commands are not recognized, close and reopen your terminal.
-
-### 2. Python Packages
-Install the required TTS and audio processing libraries:
-
-```python
-pip install kokoro-onnx soundfile
-```
-
-### 3. Download Model Weights
-Download these two required files and place them directly inside your project folder:
-- 🎡 Model architecture [kokoro-v1.0.onnx](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx)
-- 🔉 Voice embeddings [voices-v1.0.bin](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin)
-
-## 🍽️Preparations
+## 🍽️ Preparations
 1. Download your source video (`.mp4` or `.mkv`) using a local downloader like [Any Video Converter](https://www.any-video-converter.com/en8/for_video_free/) or similar local downloader.
 2. Copy the original YouTube video transcript text.
 3. Pass the transcript to an LLM (e.g., Gemini / ChatGPT) with a domain-aware prompt:
@@ -33,11 +11,12 @@ Download these two required files and place them directly inside your project fo
     dubbing_project/
     ├── input_video.mkv
     ├── subtitles.srt
-    ├── auto_dub.py
     ├── kokoro-v1.0.onnx
-    └── voices-v1.0.bin
+    ├── voices-v1.0.bin
+    └── auto_dub.py (not required on Collab)
     ```
 5. Make a python file: `auto_dub.py`
+
   <details>
     <summary>Click to expand auto_dub.py </summary>
     
@@ -176,12 +155,49 @@ Download these two required files and place them directly inside your project fo
   ```
   </details>
 
+# Choose your path
+There are two paths 🌐 / 💻, online using Google Colab (with free GPU acceleration) or offline on your local machine.
+
+## 🌐 Google Colab
+Zero local installation required. Simply open the notebook, enable GPU runtime, and upload your files:
+1. Open the notebook
+2. In Colab, switch to GPU acceleration: Runtime $\rightarrow$ Change runtime type $\rightarrow$ select T4 GPU.
+3. Upload your assets to the Collab content folder:
+    - Source video (.mp4 or .mkv)
+    - Translated subtitles (.srt)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aladinovitch/Open-Dubber/blob/main/Open_Dubber.ipynb)
+
+## 🛠️ Local Installation (Windows)
+If you prefer running offline on your local machine:
+
+Open **PowerShell** (or Command Prompt) and run the following commands:
+### 1. System Dependencies
+Install Python and FFmpeg automatically via Windows Package Manager:
+```powershell
+winget install Python3 FFmpeg
+```
+Note: After running this, close and reopen your terminal so Windows recognizes `python` and `ffmpeg` in your system PATH. Or just shift-click on the terminal taskbar to open a new one.
+
+### 2. Python Packages
+Install the required TTS and audio processing libraries:
+
+```powershell
+pip install kokoro-onnx soundfile
+```
+
+### 3. Download Model Weights
+Download these two required files and place them directly inside your project folder:
+- 🎡 Model architecture [kokoro-v1.0.onnx](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx)
+- 🔉 Voice embeddings [voices-v1.0.bin](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin)
+
 ## 🎬 Running the Pipeline
-1. Generate Synchronized Audio
+1. On your terminal navigate to the dubbing_project
+2. Generate Synchronized Audio
 
    Run `auto_dub.py` with default settings (looks for `subtitles.srt`) or pass custom flags:
     ```powershell
-    # Default run (subtitles.srt -> output_audio_synced.wav using af_bella)
+    # Default run (subtitles.srt -> output_audio_synced.wav using am_adam)
     python auto_dub.py
     
     # Custom run with specific files & voice
@@ -190,31 +206,25 @@ Download these two required files and place them directly inside your project fo
     # View all supported CLI options
     python auto_dub.py --help
     ```
-    Choose your preferred voice on [hexgrad/Kokoro-TTS](https://huggingface.co/spaces/hexgrad/Kokoro-TTS)
+    Explore voice samples on the [hexgrad/Kokoro-TTS](https://huggingface.co/spaces/hexgrad/Kokoro-TTS)
    
- 2. Merge Audio & Video
+ 3. Merge Audio & Video
 
     Merge the newly synthesized audio track with your original video while applying loudness normalization:
     ```powershell
     ffmpeg -i "input_video.mkv" -i "output_audio_synced.wav" -c:v copy -c:a aac -af "loudnorm" -map 0:v:0 -map 1:a:0 "final_dubbed_video.mp4"
     ```
-## 🧹 Optional Cleanup & Teardown
-Once your dubbed video is saved to your preferred storage (Drive, Dropbox, Mega, etc.), you can clean up your system environment:
+## 🧹 Teardown (Optional)
+When finished dubbing, save your videos onto your preferred storage (Drive, Dropbox, Mega, etc.), you can clean up your system environment.
 1. Remove the dubbing_project folder
-2. Remove Python Packages
-   ```python
-    pip uninstall kokoro-onnx soundfile misaki -y 
-    ```
-3. Uninstall Runtimes via WinGet
+2. Remove Python Packages and the runtimes
    ```powershell
-   winget uninstall Python.PythonInstallManager FFmpeg
-   ```
-4. Clear Remaining System Cache
-   ```powershell
-   # Delete local pip cache and installed site-packages
-   Remove-Item -Recurse -Force "$env:LOCALAPPDATA\pip" -ErrorAction SilentlyContinue
-   Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Programs\Python" -ErrorAction SilentlyContinue
-   Remove-Item -Recurse -Force "$env:APPDATA\Python" -ErrorAction SilentlyContinue
+    pip uninstall kokoro-onnx soundfile misaki -y
+    winget uninstall Python3 FFmpeg
+    # Delete pip cache AND leftover user-installed Python packages/environments
+    Remove-Item -Recurse -Force "$env:LOCALAPPDATA\pip" -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Programs\Python" -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force "$env:APPDATA\Python" -ErrorAction SilentlyContinue
     ```
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/aladinetk)
