@@ -7,9 +7,9 @@ Open **PowerShell** (or Command Prompt) and run the following commands:
 ### 1. System Dependencies
 Install Python and FFmpeg automatically via Windows Package Manager:
 ```powershell
-winget install Python.Python.3 FFmpeg
+winget install Python.PythonInstallManager FFmpeg
 ```
-Note: After running this, close and reopen your terminal so Windows recognizes `python` and `ffmpeg` in your system PATH.
+Note: After running this, if `python` or `ffmpeg` commands are not recognized, close and reopen your terminal.
 
 ### 2. Python Packages
 Install the required TTS and audio processing libraries:
@@ -98,8 +98,8 @@ Download these two required files and place them directly inside your project fo
           help="Output WAV audio path (default: output_audio_synced.wav)"
       )
       parser.add_argument(
-          "-v", "--voice", default="af_bella",
-          help="Kokoro voice name, e.g. 'af_bella', 'am_adam', 'am_michael' (default: af_bella)"
+        "-v", "--voice", default="am_adam",
+        help="Kokoro voice name, e.g. 'af_bella', 'am_adam', 'am_michael' (default: am_adam)"
       )
       parser.add_argument(
           "-s", "--speed", type=float, default=1.0,
@@ -178,7 +178,8 @@ Download these two required files and place them directly inside your project fo
 
 ## 🎬 Running the Pipeline
 1. Generate Synchronized Audio
-    Run `auto_dub.py` with default settings (looks for `subtitles.srt`) or pass custom flags:
+
+   Run `auto_dub.py` with default settings (looks for `subtitles.srt`) or pass custom flags:
     ```powershell
     # Default run (subtitles.srt -> output_audio_synced.wav using af_bella)
     python auto_dub.py
@@ -188,8 +189,11 @@ Download these two required files and place them directly inside your project fo
     
     # View all supported CLI options
     python auto_dub.py --help
-    ``` 
- 1. Merge Audio & Video
+    ```
+    Choose your preferred voice on [hexgrad/Kokoro-TTS](https://huggingface.co/spaces/hexgrad/Kokoro-TTS)
+   
+ 2. Merge Audio & Video
+
     Merge the newly synthesized audio track with your original video while applying loudness normalization:
     ```powershell
     ffmpeg -i "input_video.mkv" -i "output_audio_synced.wav" -c:v copy -c:a aac -af "loudnorm" -map 0:v:0 -map 1:a:0 "final_dubbed_video.mp4"
@@ -203,7 +207,7 @@ Once your dubbed video is saved to your preferred storage (Drive, Dropbox, Mega,
     ```
 3. Uninstall Runtimes via WinGet
    ```powershell
-   winget uninstall Python.Python.3 FFmpeg
+   winget uninstall Python.PythonInstallManager FFmpeg
    ```
 4. Clear Remaining System Cache
    ```powershell
