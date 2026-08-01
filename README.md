@@ -33,15 +33,6 @@ If you prefer running offline on your local machine we need few steps:
 3. Pass the transcript to an LLM (e.g., Gemini / ChatGPT) with a domain-aware prompt:
     > Translate this transcript from [Source Language] to [Target Language] for a [Recipe/Game/Topic Context] video. Format directly as a downloadable synchronized `.srt` file.
 4. Download the Python file [`autodub_local.py`](./autodub_local.py)
-5. Create a working folder structure:
-    ```text
-    dubbing_project/
-    ├── input_video.mkv
-    ├── subtitles.srt
-    ├── kokoro-v1.0.onnx
-    ├── voices-v1.0.bin
-    └── autodub_local.py
-    ```
 
 ### 2. System Dependencies
 Open **PowerShell** (or Command Prompt) and run the following commands:
@@ -59,9 +50,20 @@ pip install kokoro-onnx soundfile
 ```
 
 ### 4. Download Model Weights
-Download these two required files and place them directly inside your project folder:
+Download these two required files:
 - 🎡 Model architecture [kokoro-v1.0.onnx](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx)
 - 🔉 Voice embeddings [voices-v1.0.bin](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin)
+
+### Folder structure
+Finally you need to create a folder and have it structured like this
+```text
+dubbing_project/
+├── input_video.mkv
+├── subtitles.srt
+├── kokoro-v1.0.onnx
+├── voices-v1.0.bin
+└── autodub_local.py
+```
 
 ## 🎬 Running the Pipeline
 1. On your terminal navigate to the dubbing_project
