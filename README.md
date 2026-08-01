@@ -1,7 +1,29 @@
-# Open-Dubber — Lightweight Local Video Dubbing Pipeline
-A fast, free workflow to translate and dub videos using **Kokoro ONNX** for speech synthesis and **FFmpeg** for audio-video merging.
+# 🎙️ OpenDubber (Auto-Dub Pipeline)
+An automated video translation and neural TTS sync pipeline using Whisper, Kokoro ONNX, and FFmpeg.
 
-## 🍽️ Preparations
+## ⚡ Quickstart: Kaggle (Recommended)
+> **No local installation required.** Uses Kaggle's free T4 GPUs (30 hours/week).
+
+1. Open the [OpenDubber Kaggle Notebook](https://www.kaggle.com/aladinetk/opendubber).
+2. Click **"Copy & Edit"** in the top right.
+3. Ensure **GPU T4 x2** is enabled under `Settings -> Accelerator`.
+4. Make sure Kaggle can access the internet under `Settings -> Turn on internet`.
+5. Run Cells 1 & 2 to initialize dependencies and `auto_dub.py`.
+6. Update your asset link and names in Cell 3 and run!
+
+*Note: A free [Kaggle Account](https://www.kaggle.com) is required to run cells and access GPU acceleration.*
+
+## 📝 Optional: Generate Subtitles
+If the YouTube video does not have an existing transcript/subtitle file, generate foreign language `.srt` subtitles directly in Kaggle:
+- `pytubefix`: Downloads the raw audio stream from YouTube (fallback: `yt-dlp` if blocked).
+- `whisper`: Transcribes audio to `.srt`.
+
+---
+
+## 🛠️ Local Installation (Windows)
+If you prefer running offline on your local machine we need few steps:
+
+### 1. Preparations
 1. Download your source video (`.mp4` or `.mkv`) using a local downloader like [Any Video Converter](https://www.any-video-converter.com/en8/for_video_free/) or similar local downloader.
 2. Copy the original YouTube video transcript text.
 3. Pass the transcript to an LLM (e.g., Gemini / ChatGPT) with a domain-aware prompt:
@@ -155,38 +177,22 @@ A fast, free workflow to translate and dub videos using **Kokoro ONNX** for spee
   ```
   </details>
 
-# Choose your path
-There are two paths 🌐 / 💻, online using Google Colab (with free GPU acceleration) or offline on your local machine.
-
-## 🌐 Google Colab
-Zero local installation required. Simply open the notebook, enable GPU runtime, and upload your files:
-1. Open the notebook
-2. In Colab, switch to GPU acceleration: Runtime $\rightarrow$ Change runtime type $\rightarrow$ select T4 GPU.
-3. Upload your assets to the Collab content folder:
-    - Source video (.mp4 or .mkv)
-    - Translated subtitles (.srt)
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aladinovitch/Open-Dubber/blob/main/Open_Dubber.ipynb)
-
-## 🛠️ Local Installation (Windows)
-If you prefer running offline on your local machine:
-
+### 2. System Dependencies
 Open **PowerShell** (or Command Prompt) and run the following commands:
-### 1. System Dependencies
 Install Python and FFmpeg automatically via Windows Package Manager:
 ```powershell
 winget install Python3 FFmpeg
 ```
 Note: After running this, close and reopen your terminal so Windows recognizes `python` and `ffmpeg` in your system PATH. Or just shift-click on the terminal taskbar to open a new one.
 
-### 2. Python Packages
+### 3. Python Packages
 Install the required TTS and audio processing libraries:
 
 ```powershell
 pip install kokoro-onnx soundfile
 ```
 
-### 3. Download Model Weights
+### 4. Download Model Weights
 Download these two required files and place them directly inside your project folder:
 - 🎡 Model architecture [kokoro-v1.0.onnx](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx)
 - 🔉 Voice embeddings [voices-v1.0.bin](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin)
