@@ -1,8 +1,11 @@
 # 🎙️ OpenDubber (Auto-Dub Pipeline)
-An automated video translation and neural TTS sync pipeline using Whisper, Kokoro ONNX, and FFmpeg.
+An automated video translation and neural TTS sync pipeline using Kokoro ONNX, FFmpeg, and Whisper.
 
-## ⚡ Quickstart: Kaggle (Recommended)
-> **No local installation required.** Uses Kaggle's free T4 GPUs (30 hours/week).
+## ⚡ Quickstart: Kaggle
+> 💡 **Why Kaggle?**  
+> I strongly recommend the [Kaggle](https://www.kaggle.com) notebook over local setup, as it provides a **free T4 GPU** (30 hrs/week) with a free account.
+> * **Enhanced Phonetics:** Pre-configured with `misaki` G2P for fluid, natural pronunciation.
+> * **Advanced Audio Processing:** Integrated `pytubefix` audio extraction + `whisper` speech-to-text.
 
 1. Open the [OpenDubber Kaggle Notebook](https://www.kaggle.com/aladinetk/opendubber).
 2. Click **"Copy & Edit"** in the top right.
@@ -11,7 +14,7 @@ An automated video translation and neural TTS sync pipeline using Whisper, Kokor
 5. Run Cells 1 & 2 to initialize dependencies and `auto_dub.py`.
 6. Update your asset link and names in Cell 3 and run!
 
-*Note: A free [Kaggle Account](https://www.kaggle.com) is required to run cells and access GPU acceleration.*
+*Note: A  is required to run cells and access GPU acceleration.*
 
 ## 📝 Optional: Generate Subtitles
 If the YouTube video does not have an existing transcript/subtitle file, generate foreign language `.srt` subtitles directly in Kaggle:
@@ -22,6 +25,7 @@ If the YouTube video does not have an existing transcript/subtitle file, generat
 
 ## 🛠️ Local Installation (Windows)
 If you prefer running offline on your local machine we need few steps:
+> ℹ️ **Note:** The local script is kept intentionally lightweight and uses standard CPU execution. It does **not** include integrated YouTube audio downloaders, Whisper transcription, or advanced G2P engines (`misaki`). You will need to provide ready-made `.mkv` and `.srt` files.
 
 ### 1. Preparations
 1. Download your source video (`.mp4` or `.mkv`) using a local downloader like [Any Video Converter](https://www.any-video-converter.com/en8/for_video_free/) or similar local downloader.
