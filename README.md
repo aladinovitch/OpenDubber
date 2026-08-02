@@ -28,6 +28,10 @@ Once `.srt` files are present, `autodub.py` executes speech synthesis and final 
 ```bash
 python autodub.py --srt "/path/to/subtitles.srt" --out "/path/to/output_synced.wav"
 ```
+The pipeline then automatically remuxes the synthesized audio track into the source video using FFmpeg with standardized loudness normalization (loudnorm filter):
+```bash
+ffmpeg -i input_video.mp4 -i output_synced.wav -c:v copy -c:a aac -af loudnorm -map 0:v:0 -map 1:a:0 "[En dub] input_video.mp4"
+```
 ---
 
 ## 🛠️ Local Installation (Windows)
@@ -69,23 +73,23 @@ dubbing_project/
 ├── subtitles.srt
 ├── kokoro-v1.0.onnx
 ├── voices-v1.0.bin
-└── autodub_local.py
+└── 
 ```
 
 ## 🎬 Running the Pipeline
 1. On your terminal navigate to the dubbing_project
 2. Generate Synchronized Audio
 
-   Run `auto_dub.py` with default settings (looks for `subtitles.srt`) or pass custom flags:
+   Run `auto_dub_local.py` with default settings (looks for `subtitles.srt`) or pass custom flags:
     ```powershell
-    # Default run (subtitles.srt -> output_audio_synced.wav using am_adam)
-    python auto_dub.py
+    # Default run (subtitles.srt -> output_audio_synced.wav using am_liam)
+    python autodub_local.py
     
     # Custom run with specific files & voice
-    python auto_dub.py -i video_subtitle_translated.srt -o english_dub.wav -v am_adam
+    python autodub_local.py --srt video_subtitle_translated.srt -out english_dub.wav -v am_adam
     
     # View all supported CLI options
-    python auto_dub.py --help
+    python autodub_local --help
     ```
     Explore voice samples on the [hexgrad/Kokoro-TTS](https://huggingface.co/spaces/hexgrad/Kokoro-TTS)
    
@@ -100,13 +104,27 @@ When finished dubbing, save your videos onto your preferred storage (Drive, Drop
 1. Remove the dubbing_project folder
 2. Remove Python Packages and the runtimes
    ```powershell
-    pip uninstall kokoro-onnx soundfile misaki -y
+    pip uninstall kokoro-onnx soundfile -y
     winget uninstall Python3 FFmpeg
     # Delete pip cache AND leftover user-installed Python packages/environments
     Remove-Item -Recurse -Force "$env:LOCALAPPDATA\pip" -ErrorAction SilentlyContinue
     Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Programs\Python" -ErrorAction SilentlyContinue
     Remove-Item -Recurse -Force "$env:APPDATA\Python" -ErrorAction SilentlyContinue
     ```
+## 📜 License & Acknowledgments
+This project relies on several remarkable open-source tools:
+* **Neural TTS Engine:** Powered by [Kokoro ONNX](https://github.com/hexgrad/kokoro).
+* **Audio & Video Processing:** Handled via [FFmpeg](https://ffmpeg.org/).
+* **Transcription:** Driven by [OpenAI Whisper](https://github.com/openai/whisper).
+* **Media Extraction:** Audio streams fetched using [PyTubefix](https://github.com/JuanBindez/pytubefix) and [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+* **G2P Processing:** Enhanced phonetics powered by [Misaki](https://github.com/hexgrad/misaki).
+
+## ☕ Support the Project
+
+Enjoying videos in your language thanks to OpenDubber? Consider supporting the project!
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/aladinetk)
 [![Liberapay](https://img.shields.io/badge/Liberapay-Donate-F6C915?style=for-the-badge&logo=liberapay&logoColor=black)](https://liberapay.com/AladineTK/)
+
+
+
