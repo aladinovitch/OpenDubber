@@ -1,26 +1,33 @@
 # 🎙️ OpenDubber (Auto-Dub Pipeline)
-An automated video translation and neural TTS sync pipeline using Kokoro ONNX, FFmpeg, and Whisper.
+An automated video translation and neural TTS sync pipeline using **Kokoro ONNX**, **FFmpeg**, and **Whisper**.
+OpenDubber automatically takes video/subtitle pairs, processes speech timing, generates localized neural voiceovers using Kokoro, and remuxes the audio back onto the video track with volume normalization.
 
 ## ⚡ Quickstart: Kaggle
 > 💡 **Why Kaggle?**  
-> I strongly recommend the [Kaggle](https://www.kaggle.com) notebook over local setup, as it provides a **free T4 GPU** (30 hrs/week) with a free account.
+> I strongly recommend the [Kaggle](https://www.kaggle.com) notebook over local setup, as it provides
+> * **free T4 GPU** (30 hrs/week), pre-configured CUDA environment, and high-bandwidth asset processing.
 > * **Enhanced Phonetics:** Pre-configured with `misaki` G2P for fluid, natural pronunciation.
 > * **Advanced Audio Processing:** Integrated `pytubefix` audio extraction + `whisper` speech-to-text.
 
+### Setup Instructions
 1. Open the [OpenDubber Kaggle Notebook](https://www.kaggle.com/aladinetk/opendubber).
 2. Click **"Copy & Edit"** in the top right.
 3. Ensure **GPU T4 x2** is enabled under `Settings -> Accelerator`.
 4. Make sure Kaggle can access the internet under `Settings -> Turn on internet`.
-5. Run Cells 1 & 2 to initialize dependencies and `auto_dub.py`.
-6. Update your asset link and names in Cell 3 and run!
+5. *(Optional)* Add your secure queue/credentials in **Add-ons -> Secrets**.
+6. Run the notebook sequentially!
 
-*Note: A  is required to run cells and access GPU acceleration.*
+### 📝 Subtitle Generation & Dubbing Workflow
+#### 1. Automatic Transcription (Whisper)
+If your source media lacks an `.srt` file, the pipeline automatically extracts audio via `pytubefix` (with `yt-dlp` fallback) and runs OpenAI Whisper to generate timestamped subtitles:
+* **Pytubefix:** Streamlines audio extraction directly from web sources.
+* **Whisper:** Transcribes audio to synchronized `.srt` tracks in target languages.
+#### 2. Speech Synthesis & Remuxing (`autodub.py`)
+Once `.srt` files are present, `autodub.py` executes speech synthesis and final assembly:
 
-## 📝 Optional: Generate Subtitles
-If the YouTube video does not have an existing transcript/subtitle file, generate foreign language `.srt` subtitles directly in Kaggle:
-- `pytubefix`: Downloads the raw audio stream from YouTube (fallback: `yt-dlp` if blocked).
-- `whisper`: Transcribes audio to `.srt`.
-
+```bash
+python autodub.py --srt "/path/to/subtitles.srt" --out "/path/to/output_synced.wav"
+```
 ---
 
 ## 🛠️ Local Installation (Windows)
