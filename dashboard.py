@@ -119,8 +119,8 @@ def launch_dashboard():
             
             print(f"📥 Starting Mega download to: {work_dir}")
             print(f"🔗 URL: {mega_url}\n")
-            cmd = f'megadl --path "{work_dir}" "{mega_url}"'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            cmd = ["megadl", "--path", str(work_dir), mega_url]
+            result = subprocess.run(cmd)
     
     def on_run_click(b):
         with output_area:
