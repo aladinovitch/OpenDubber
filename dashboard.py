@@ -213,7 +213,7 @@ def launch_dashboard():
                 print("👉 Click '📥 Download from MEGA' first if you haven't pulled your assets yet.")
                 return
             print("⚡ All queue files verified on disk. Launching batch dubbing...\n")
-            batchdub(dub_queue, work_dir)
+            batchdub(dub_queue, work_dir, voice=selected_voice, speed=selected_speed)
     
     download_button.on_click(on_download_click)
     run_button.on_click(on_run_click)
