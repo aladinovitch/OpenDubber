@@ -275,7 +275,7 @@ def launch_dashboard():
         speed_slider,
         widgets.HTML("<hr style='margin: 10px 0;'/><h4>🎬 Dubbing Queue (Video, Subtitle)</h4>"),
         queue_rows_container,
-        add_row_btn,
+        queue_controls,
         download_button,
         run_button,
         output_area
