@@ -1,42 +1,48 @@
 # 🎙️ OpenDubber (Auto-Dub Pipeline)
-An automated video translation and neural TTS sync pipeline using **Kokoro ONNX**, **FFmpeg**, and **Whisper**.
-OpenDubber automatically takes video/subtitle pairs, processes speech timing, generates localized neural voiceovers using Kokoro, and remuxes the audio back onto the video track with volume normalization.
+An automated, GPU-accelerated video dubbing and audio pipeline designed to generate natural-sounding voiceovers from subtitles using **Kokoro TTS** and **FFmpeg**.
 
-## ⚡ Quickstart: Kaggle
+## ⚡ Quick Start Pipeline
 > 💡 **Why Kaggle?**  
 > I strongly recommend the [Kaggle](https://www.kaggle.com) notebook over local setup, as it provides
 > * **free T4 GPU** (30 hrs/week), pre-configured CUDA environment, and high-bandwidth asset processing.
 > * **Enhanced Phonetics:** Pre-configured with `misaki` G2P for fluid, natural pronunciation.
 > * **Advanced Audio Processing:** Integrated `pytubefix` audio extraction + `whisper` speech-to-text.
 
-### Setup Instructions
-1. Open the [OpenDubber Kaggle Notebook](https://www.kaggle.com/aladinetk/opendubber).
-2. Click **"Copy & Edit"** in the top right.
-3. Ensure **GPU T4 x2** is enabled under `Settings -> Accelerator`.
-4. Make sure Kaggle can access the internet under `Settings -> Turn on internet`.
-5. *(Optional)* Add your secure queue/credentials in **Add-ons -> Secrets**.
-6. Run the notebook sequentially!
+Run the [OpenDubber Kaggle Notebook](https://www.kaggle.com/aladinetk/opendubber).
 
-### 📝 Subtitle Generation & Dubbing Workflow
-#### 1. Automatic Transcription (Whisper)
-If your source media lacks an `.srt` file, the pipeline automatically extracts audio via `pytubefix` (with `yt-dlp` fallback) and runs OpenAI Whisper to generate timestamped subtitles:
-* **Pytubefix:** Streamlines audio extraction directly from web sources.
-* **Whisper:** Transcribes audio to synchronized `.srt` tracks in target languages.
-#### 2. Speech Synthesis & Remuxing (`autodub.py`)
-Once `.srt` files are present, `autodub.py` executes speech synthesis and final assembly:
+The notebook is divided into three streamlined phases:
+1. **`Engine Warming`**  
+   Installs system dependencies (`espeak-ng`, `ffmpeg`, `megatools`), sets up CUDA-accelerated `onnxruntime-gpu` for Kaggle T4 GPUs, fetches Kokoro v1.0 model weights, and pulls execution scripts.
+2. **`Dubbing Machine`**  
+   Launches the interactive IPyWidgets UI dashboard. Allows downloading video assets via Mega, managing batch video/SRT queues, selecting Kokoro voice profiles/speech speeds, and running the dubbing engine.
+3. **`Inspection Bay` (Optional)**  
+   Generates fast HTML5 video clip samples directly inside the notebook to preview audio sync and voice quality before downloading full outputs.
+
+## 🛠️ Transcript & Subtitle Utilities
+### 🎙️ YouTube & Whisper Auto-Transcription
+Generate `.srt` subtitles from any video link when transcripts aren't available:
+* **Audio Extraction:** Fetches streams via `pytubefix`.
+* **Speech-to-Text:** Generates timestamped `.srt` files locally using OpenAI's `whisper` (`--model turbo` or `large-v3`).
+
+### 🧹 Subtitle Cleaning (`subfix.py`)
+CLI utility to validate, re-index, clean formatting errors, and strip problematic tags from subtitles:
 
 ```bash
-python autodub.py --srt "/path/to/subtitles.srt" --out "/path/to/output_synced.wav"
+# Clean in-place
+!python subfix.py --srt "/path/to/subtitles.srt"
+
+# Output to new file
+!python subfix.py --srt "/path/to/subtitles.srt" --out "/path/to/cleaned.srt"
 ```
-The pipeline then automatically remuxes the synthesized audio track into the source video using FFmpeg with standardized loudness normalization (loudnorm filter):
-```bash
-ffmpeg -i input_video.mp4 -i output_synced.wav -c:v copy -c:a aac -af loudnorm -map 0:v:0 -map 1:a:0 "[En dub] input_video.mp4"
-```
----
+## 📂 Architecture
+* **`dashboard.py`**: Interactive IPyWidgets UI panel for queue & asset management.
+* **`batchdub.py`**: Core pipeline runner handling multi-file processing loops.
+* **`autodub.py`**: Low-level audio generation, time-stretching, and FFmpeg remuxing logic.
+* **`subfix.py`**: Standalone SRT repair utility.
 
 ## 🛠️ Local Installation (Windows)
-If you prefer running offline on your local machine we need few steps:
-> ℹ️ **Note:** The local script is kept intentionally lightweight and uses standard CPU execution. It does **not** include integrated YouTube audio downloaders, Whisper transcription, or advanced G2P engines (`misaki`). You will need to provide ready-made `.mkv` and `.srt` files.
+If you prefer running offline on your local machine instead of Kaggle, here are the setup steps:
+> ℹ️ **Note:** The local workflow is kept intentionally lightweight and uses standard CPU execution. It does **not** include integrated YouTube audio downloading, Whisper transcription, or advanced G2P engines (`misaki`). You will need to provide ready-made `.mkv` and `.srt` files.
 
 ### 1. Preparations
 1. Download your source video (`.mp4` or `.mkv`) using a local downloader like [Any Video Converter](https://www.any-video-converter.com/en8/for_video_free/) or similar local downloader.
