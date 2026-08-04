@@ -123,10 +123,10 @@ def launch_dashboard():
 
     # Auto-discovery button
     auto_detect_btn = widgets.Button(
-        description='Auto-Detect Pairs',
+        description='Auto Pairs',
         button_style='warning',
         icon='search',
-        layout=widgets.Layout(width='150px', height='28px', margin='5px 0 15px 0')
+        layout=widgets.Layout(width='140px', height='20px', margin='5px 0 15px 5px')
     )
     auto_detect_btn.on_click(auto_discover_queue)
     queue_controls = widgets.HBox([add_row_btn, auto_detect_btn])
