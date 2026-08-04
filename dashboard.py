@@ -207,7 +207,7 @@ def launch_dashboard():
                 print(f"\n✅ Assets ready in '{subfolder}'! ({len(existing_files)} file(s) present)", flush=True)
             else:
                 print(f"\n⚠️ Download finished with code {process.returncode}. Verify files in {work_dir}", flush=True)
-
+            auto_discover_queue()
     
     def on_run_click(b):
         with output_area:
