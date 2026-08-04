@@ -9,6 +9,7 @@ def stream_process(cmd, prefix=""):
     # Mute noisy ONNX runtime loggers in child processes
     env = os.environ.copy()
     env["ONNXRUNTIME_LOGGING_LEVEL"] = "3"
+    env["PYTHONUNBUFFERED"] = "1"  # Force unbuffered stdout/stderr across Python scripts
 
     process = subprocess.Popen(
         cmd,
@@ -19,14 +20,22 @@ def stream_process(cmd, prefix=""):
         env=env
     )
 
+    # Stream line by line in real-time
     for line in process.stdout:
         clean_line = line.strip()
+        if not clean_line:
+            continue
+
+        # Filter out noisy ONNX C++ Provider fallback errors
+        if "provider_bridge_ort.cc" in clean_line or "Failed to create CUDAExecutionProvider" in clean_line:
+            continue
+
+        # Handle carriage returns (\r) often used by progress bars (FFmpeg / tqdm)
+        if '\r' in clean_line:
+            clean_line = clean_line.split('\r')[-1].strip()
+            
         if clean_line:
-            # Handle carriage returns (\r) often used by progress bars (like FFmpeg or tqdm)
-            if '\r' in clean_line:
-                clean_line = clean_line.split('\r')[-1].strip()
-            if clean_line:
-                print(f"{prefix}{clean_line}", flush=True)
+            print(f"{prefix}{clean_line}", flush=True)
 
     process.wait()
     return process.returncode
