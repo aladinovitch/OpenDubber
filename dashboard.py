@@ -79,8 +79,8 @@ def launch_dashboard():
         queue_rows_container.children = current_children
     
     # Default placeholders
-    add_queue_row(video="First video.mkv", srt="Along with its first subtitle.srt")
-    add_queue_row(video="Second video.mkv", srt="Second subtitle.srt")
+    add_queue_row(video="", srt="")
+    add_queue_row(video="", srt="")
     
     add_row_btn = widgets.Button(
         description='Add Video/Subtitle Pair',
