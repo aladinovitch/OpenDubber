@@ -3,6 +3,7 @@ import subprocess
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 from pathlib import Path
+from batchdub import batchdub
 
 try:
     from kaggle_secrets import UserSecretsClient
@@ -175,7 +176,7 @@ def launch_dashboard():
                 print("👉 Click '📥 Download from MEGA' first if you haven't pulled your assets yet.")
                 return
             print("⚡ All queue files verified on disk. Launching batch dubbing...\n")
-            process_batch(dub_queue)
+            batchdub(dub_queue)
     
     download_button.on_click(on_download_click)
     run_button.on_click(on_run_click)
