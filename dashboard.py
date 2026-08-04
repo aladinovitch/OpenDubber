@@ -78,8 +78,40 @@ def launch_dashboard():
         current_children.append(create_queue_row(video, srt))
         queue_rows_container.children = current_children
     
-    # Default placeholders
-    add_queue_row(video="", srt="")
+    def auto_discover_queue(b=None):
+        """Scans the target work_dir and auto-fills matching video/srt pairs."""
+        subfolder = subfolder_input.value.strip()
+        work_dir = Path("/kaggle/working") / subfolder
+        
+        if not work_dir.exists():
+            with output_area:
+                clear_output()
+                print(f"⚠️ Directory '{work_dir}' does not exist yet. Run 'Mega Download' first.")
+            return
+
+        video_extensions = {".mp4", ".mkv", ".webm", ".avi", ".mov"}
+        discovered = []
+
+        # Look for video files that have matching .srt sidecars
+        for vid in sorted(work_dir.glob("*")):
+            if vid.suffix.lower() in video_extensions:
+                srt_candidate = work_dir / f"{vid.stem}.srt"
+                if srt_candidate.exists():
+                    discovered.append((vid.name, srt_candidate.name))
+
+        if discovered:
+            # Clear existing rows and replace with auto-detected pairs
+            queue_rows_container.children = []
+            for v_file, s_file in discovered:
+                add_queue_row(video=v_file, srt=s_file)
+            
+            with output_area:
+                clear_output()
+                print(f"✨ Auto-discovered {len(discovered)} video/subtitle pair(s) in '{subfolder}'!")
+        else:
+            with output_area:
+                clear_output()
+                print(f"🔍 No matching (Video + .srt) pairs found in '{work_dir}'.")
     
     add_row_btn = widgets.Button(
         description='Add Video/Subtitle Pair',
@@ -88,6 +120,16 @@ def launch_dashboard():
         layout=widgets.Layout(width='250px', height='20px',margin='5px 0 20px 0')
     )
     add_row_btn.on_click(add_queue_row)
+
+    # Auto-discovery button
+    auto_detect_btn = widgets.Button(
+        description='Auto-Detect Pairs',
+        button_style='warning',
+        icon='search',
+        layout=widgets.Layout(width='150px', height='28px', margin='5px 0 15px 0')
+    )
+    auto_detect_btn.on_click(auto_discover_queue)
+    queue_controls = widgets.HBox([add_row_btn, auto_detect_btn])
 
     # --- Buttons Setup ---
     download_button = widgets.Button(
@@ -187,15 +229,15 @@ def launch_dashboard():
                 s_val = row.children[1].value.strip()
                 if v_val and s_val:
                     dub_queue.append((v_val, s_val))
-            print(f"🎯 Preparing Dubbing Queue...")
-            print(f" 🗣️ Voice: {selected_voice} | Speed: {selected_speed}x")
-            print(f" 📋 Queue Items ({len(dub_queue)}):")
+            print(f"🎯 Preparing Dubbing Queue...", flush=True)
+            print(f" 🗣️ Voice: {selected_voice} | Speed: {selected_speed}x", flush=True)
+            print(f" 📋 Queue Items ({len(dub_queue)}):", flush=True)
             for idx, (vid, srt) in enumerate(dub_queue, 1):
-                print(f"    {idx}. Video: {vid} | Sub: {srt}")
+                print(f"    {idx}. Video: {vid} | Sub: {srt}", flush=True)
             print("-" * 50)
     
             if not dub_queue:
-                print("⚠️ Warning: Your dubbing queue is empty!")
+                print("⚠️ Warning: Your dubbing queue is empty!", flush=True)
                 return
     
             # 3. File Verification & Pre-flight Check
