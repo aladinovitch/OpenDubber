@@ -120,7 +120,28 @@ def launch_dashboard():
             print(f"📥 Starting Mega download to: {work_dir}")
             print(f"🔗 URL: {mega_url}\n")
             cmd = ["megadl", "--path", str(work_dir), mega_url]
-            result = subprocess.run(cmd)
+            
+            # Use Popen to stream stdout/stderr in real-time
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,  # Merge stderr into stdout so we don't miss status logs
+                text=True,
+                bufsize=1
+            )
+            
+            for line in process.stdout:
+                clean_line = line.strip()
+                if clean_line:
+                    # Optional: filter out raw byte-counter spam if you want cleaner logs
+                    print(clean_line, flush=True)
+
+            process.wait()
+
+            if process.returncode == 0:
+                print("\n✅ Download process completed!")
+            else:
+                print(f"\n❌ Mega download exited with code: {process.returncode}")
     
     def on_run_click(b):
         with output_area:
