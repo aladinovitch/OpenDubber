@@ -55,10 +55,10 @@ def batchdub(track_list, work_dir):
         
         # STEP 1: Run autodub.py (TTS)
         
-        dub_cmd = ["python", "autodub.py", "--srt", str(input_srt), "--out", str(output_audio)]
+        dub_cmd = [sys.executable, "-u", "autodub.py", "--srt", str(input_srt), "--out", str(output_audio)]
         result_code = stream_process(dub_cmd, prefix="    [autodub] ")
         
-        if result_code.returncode != 0:
+        if result_code != 0:
             print(f"⚠️ Error during autodub execution for {video_filename}. Skipping to next step.")
             continue
 
@@ -68,7 +68,7 @@ def batchdub(track_list, work_dir):
             continue
         
         ffmpeg_cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+            "ffmpeg", "-hide_banner", "-loglevel", "info", "-stats", "-y",
             "-i", str(input_video),
             "-i", str(output_audio),
             "-c:v", "copy",
@@ -81,7 +81,7 @@ def batchdub(track_list, work_dir):
         
         ffmpeg_code = stream_process(ffmpeg_cmd, prefix="    [ffmpeg] ")
         
-        if ffmpeg_code.returncode == 0:
+        if ffmpeg_code == 0:
             print(f"✅ Successfully created MP4: {output_video.name}\n")
             if output_audio.exists():
                 output_audio.unlink()
