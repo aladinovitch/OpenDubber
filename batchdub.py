@@ -44,7 +44,7 @@ def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
     total = len(track_list)
     
     for idx, (video_filename, srt_filename) in enumerate(track_list, start=1):
-        print(f"[{idx}/{total}] 🎙️ Dubbing {video_filename}")
+        print(f"[{idx}/{total}] 🎙️ Dubbing {video_filename}", flush=True)
         
         # Paths setup
         input_video = work_dir / video_filename
@@ -61,8 +61,8 @@ def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
         "--voice", str(voice),
         "--speed", str(speed)
         ]
+        print("  ⏳ [TTS] Generating dubbed audio...", flush=True)
         result_code = stream_process(dub_cmd, prefix="    [autodub] ")
-        
         if result_code != 0:
             print(f"⚠️ Error during autodub execution for {video_filename}. Skipping to next step.")
             continue
@@ -83,17 +83,15 @@ def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
             "-map", "1:a:0",
             str(output_video)
         ]
-        
+        print("  🎬 [FFmpeg] Remuxing video & audio...", flush=True)
         ffmpeg_code = stream_process(ffmpeg_cmd, prefix="    [ffmpeg] ")
         
         if ffmpeg_code == 0:
-            print(f"✅ Successfully created MP4: {output_video.name}\n")
+            print(f"✅ Successfully created MP4: {output_video.name}\n", flush=True)
             if output_audio.exists():
                 output_audio.unlink()
         else:
-            print(f"❌ FFmpeg remuxing failed for {video_filename}\n")
-            
-        print() # Line break between tracks
+            print(f"❌ FFmpeg remuxing failed for {video_filename}\n", flush=True)
 
     # --- 3. BROWSER NOTIFICATION GUI ---
     print("🎉 All tracks processed")
