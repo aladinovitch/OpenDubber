@@ -65,7 +65,7 @@ def launch_dashboard():
         srt_box = widgets.Text(value=srt_val, placeholder='subtitle.srt', layout=widgets.Layout(width='600px'))
         remove_btn = widgets.Button(icon='trash', button_style='danger', layout=widgets.Layout(width='32px', height='24px', margin='4px 0 0 5px', padding='0'))
         
-        row = widgets.HBox([video_box, srt_box, remove_btn], layout=widgets.Layout(margin='2px 2px'))
+        row = widgets.HBox([video_box, srt_box, remove_btn], layout=widgets.Layout(margin='2px 2px', overflow='auto'))
         
         def on_remove(_):
             queue_rows_container.children = [r for r in queue_rows_container.children if r != row]
@@ -159,6 +159,12 @@ def launch_dashboard():
                 # 3. Print any non-progress structural logs (errors, warnings, existing file skips)
                 print(clean_line, flush=True)
             process.wait()
+            # megadl returns 0 on success, or non-zero if files already exist/skipped
+            existing_files = list(work_dir.glob("*"))
+            if process.returncode == 0 or len(existing_files) > 0:
+                print(f"\n✅ Assets ready in '{subfolder}'! ({len(existing_files)} file(s) present)", flush=True)
+            else:
+                print(f"\n⚠️ Download finished with code {process.returncode}. Verify files in {work_dir}", flush=True)
 
     
     def on_run_click(b):
@@ -212,7 +218,7 @@ def launch_dashboard():
                 print(f"\n💡 Expected Directory: {work_dir}")
                 print("👉 Click '📥 Download from MEGA' first if you haven't pulled your assets yet.")
                 return
-            print("⚡ All queue files verified on disk. Launching batch dubbing...\n")
+            print("⚡ All queue files verified on disk. Launching batch dubbing...\n", flush=True)
             batchdub(dub_queue, work_dir, voice=selected_voice, speed=selected_speed)
     
     download_button.on_click(on_download_click)
