@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import ipywidgets as widgets
 from IPython.display import display, clear_output
