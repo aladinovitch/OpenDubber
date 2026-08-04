@@ -1,8 +1,9 @@
 import os
 import subprocess
+from pathlib import Path
 from IPython.display import display, Javascript
 
-def batchdub(track_list):
+def batchdub(track_list, work_dir):
     total = len(track_list)
     
     for idx, (video_filename, srt_filename) in enumerate(track_list, start=1):
