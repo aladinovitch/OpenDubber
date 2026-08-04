@@ -1,7 +1,35 @@
 import os
 import subprocess
+import sys
 from pathlib import Path
 from IPython.display import display, Javascript
+
+def stream_process(cmd, prefix=""):
+    """Helper function to execute a command and stream its output in real-time."""
+    # Mute noisy ONNX runtime loggers in child processes
+    env = os.environ.copy()
+    env["ONNXRUNTIME_LOGGING_LEVEL"] = "3"
+
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,  # Combine stderr into stdout for continuous streaming
+        text=True,
+        bufsize=1,
+        env=env
+    )
+
+    for line in process.stdout:
+        clean_line = line.strip()
+        if clean_line:
+            # Handle carriage returns (\r) often used by progress bars (like FFmpeg or tqdm)
+            if '\r' in clean_line:
+                clean_line = clean_line.split('\r')[-1].strip()
+            if clean_line:
+                print(f"{prefix}{clean_line}", flush=True)
+
+    process.wait()
+    return process.returncode
 
 def batchdub(track_list, work_dir):
     total = len(track_list)
@@ -19,9 +47,9 @@ def batchdub(track_list, work_dir):
         # STEP 1: Run autodub.py (TTS)
         
         dub_cmd = ["python", "autodub.py", "--srt", str(input_srt), "--out", str(output_audio)]
-        result = subprocess.run(dub_cmd)
+        result_code = stream_process(dub_cmd, prefix="    [autodub] ")
         
-        if result.returncode != 0:
+        if result_code.returncode != 0:
             print(f"⚠️ Error during autodub execution for {video_filename}. Skipping to next step.")
             continue
 
@@ -42,9 +70,9 @@ def batchdub(track_list, work_dir):
             str(output_video)
         ]
         
-        ffmpeg_result = subprocess.run(ffmpeg_cmd)
+        ffmpeg_code = stream_process(ffmpeg_cmd, prefix="    [ffmpeg] ")
         
-        if ffmpeg_result.returncode == 0:
+        if ffmpeg_code.returncode == 0:
             print(f"✅ Successfully created MP4: {output_video.name}\n")
             if output_audio.exists():
                 output_audio.unlink()
