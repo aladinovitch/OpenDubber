@@ -121,7 +121,44 @@ def launch_dashboard():
             print(f"📥 Starting Mega download to: {work_dir}")
             print(f"🔗 URL: {mega_url}\n")
             cmd = ["megadl", "--path", str(work_dir), mega_url]
-            result = subprocess.run(cmd)
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+            
+            # Regex to capture percentage progress lines (e.g. "15.57%")
+            pct_pattern = re.compile(r"(\d+\.\d+)%")
+            last_reported_step = -1
+    
+            for line in process.stdout:
+                clean_line = line.strip()
+                if not clean_line:
+                    continue
+    
+                # 1. Capture file initialization line (e.g., "F /path/to/file")
+                if clean_line.startswith("F "):
+                    filename = Path(clean_line.split(" ", 1)[1]).name
+                    print(f"📦 Downloading: {filename}", flush=True)
+                    last_reported_step = -1  # Reset milestone tracker for new file
+                    continue
+    
+                # 2. Check if the line is a progress update
+                match = pct_pattern.search(clean_line)
+                if match:
+                    percentage = float(match.group(1))
+                    # Report only at 25%, 50%, 75%, and 100% milestones
+                    current_step = int(percentage // 25)
+                    if current_step > last_reported_step and current_step > 0:
+                        print(f"   ⏳ Progress: {current_step * 25}%", flush=True)
+                        last_reported_step = current_step
+                    continue
+    
+                # 3. Print any non-progress structural logs (errors, warnings, existing file skips)
+                print(clean_line, flush=True)
+            process.wait()
 
     
     def on_run_click(b):
