@@ -40,7 +40,7 @@ def stream_process(cmd, prefix=""):
     process.wait()
     return process.returncode
 
-def batchdub(track_list, work_dir):
+def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
     total = len(track_list)
     
     for idx, (video_filename, srt_filename) in enumerate(track_list, start=1):
@@ -54,8 +54,13 @@ def batchdub(track_list, work_dir):
         output_video = work_dir / f"[En dub] {video_stem}.mp4"
         
         # STEP 1: Run autodub.py (TTS)
-        
-        dub_cmd = [sys.executable, "-u", "autodub.py", "--srt", str(input_srt), "--out", str(output_audio)]
+        dub_cmd = [
+        sys.executable, "-u", "autodub.py",
+        "--srt", str(input_srt),
+        "--out", str(output_audio),
+        "--voice", str(voice),
+        "--speed", str(speed)
+        ]
         result_code = stream_process(dub_cmd, prefix="    [autodub] ")
         
         if result_code != 0:
