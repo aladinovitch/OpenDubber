@@ -34,11 +34,13 @@ CLI utility to validate, re-index, clean formatting errors, and strip problemati
 # Output to new file
 !python subfix.py --srt "/path/to/subtitles.srt" --out "/path/to/cleaned.srt"
 ```
-## 📂 Architecture
-* **`dashboard.py`**: Interactive IPyWidgets UI panel for queue & asset management.
-* **`batchdub.py`**: Core pipeline runner handling multi-file processing loops.
-* **`autodub.py`**: Low-level audio generation, time-stretching, and FFmpeg remuxing logic.
-* **`subfix.py`**: Standalone SRT repair utility.
+## 📂 Repository Structure
+* **`opendubber.ipynb`**: Master Kaggle/Jupyter notebook containing the full 3-step pipeline setup and UI.
+* **`dashboard.py`**: Interactive IPyWidgets UI panel for queue & asset management inside the notebook.
+* **`batchdub.py`**: Batch processing runner that loops through video/SRT queues.
+* **`autodub.py`**: Core audio synthesis engine, time-stretching, and FFmpeg remuxing logic (GPU/Kaggle optimized).
+* **`autodub_local.py`**: Lightweight standalone CPU script for running dubs locally on Windows/Linux.
+* **`subfix.py`**: Standalone CLI utility for validating, cleaning, and repairing `.srt` subtitle files.
 
 ## 🛠️ Local Installation (Windows)
 If you prefer running offline on your local machine instead of Kaggle, here are the setup steps:
