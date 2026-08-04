@@ -80,7 +80,6 @@ def launch_dashboard():
     
     # Default placeholders
     add_queue_row(video="", srt="")
-    add_queue_row(video="", srt="")
     
     add_row_btn = widgets.Button(
         description='Add Video/Subtitle Pair',
