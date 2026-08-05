@@ -24,8 +24,8 @@ Generate `.srt` subtitles from any video link when transcripts aren't available:
 * **Audio Extraction:** Fetches streams via `pytubefix`.
 * **Speech-to-Text:** Generates timestamped `.srt` files locally using OpenAI's `whisper` (`--model turbo` or `large-v3`).
 
-### 🧹 Subtitle Cleaning (`subfix.py`)
-CLI utility to validate, re-index, clean formatting errors, and strip problematic tags from subtitles:
+### 🧹 Subtitle Cleaning
+`subfix.py` the CLI utility to validate, re-index, clean formatting errors, and strip problematic tags from subtitles:
 
 ```bash
 # Clean in-place
