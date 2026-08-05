@@ -25,11 +25,7 @@ def stream_process(cmd, prefix=""):
         clean_line = line.strip()
         if not clean_line:
             continue
-
-        # Filter out noisy ONNX C++ Provider fallback errors
-        if "provider_bridge_ort.cc" in clean_line or "Failed to create CUDAExecutionProvider" in clean_line:
-            continue
-
+        
         # Handle carriage returns (\r) often used by progress bars (FFmpeg / tqdm)
         if '\r' in clean_line:
             clean_line = clean_line.split('\r')[-1].strip()
