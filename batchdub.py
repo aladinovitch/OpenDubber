@@ -56,7 +56,7 @@ def stream_process(cmd, prefix=""):
 def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
     total = len(track_list)
 
-    for idx, (video_filename, srt_filename) in enumerate(track_list, start=1):
+    for idx, (video_filename, srt_filename) in enumerate(tqdm(track_list, desc="Overall Batch"), start=1):
         print(f"[{idx}/{total}] 🎙️ Dubbing {video_filename}", flush=True)
 
         # Paths setup
