@@ -56,6 +56,13 @@ def launch_dashboard():
         style=style,
         layout=layout
     )
+
+    keep_audio_checkbox = widgets.Checkbox(
+        value=False,
+        description='Keep raw synced WAV file after remuxing',
+        disabled=False,
+        indent=False
+    )
     
     queue_rows_container = widgets.VBox()
     
@@ -221,6 +228,7 @@ def launch_dashboard():
             
             selected_voice = voice_select.value
             selected_speed = speed_slider.value
+            keep_audio = keep_audio_checkbox.value
     
             # 2. Extract Dubbing Queue dynamically from UI rows
             dub_queue = []
@@ -261,7 +269,7 @@ def launch_dashboard():
                 print("👉 Click '📥 Download from MEGA' first if you haven't pulled your assets yet.")
                 return
             print("⚡ All queue files verified on disk. Launching batch dubbing...\n", flush=True)
-            batchdub(dub_queue, work_dir, voice=selected_voice, speed=selected_speed)
+            batchdub(dub_queue, work_dir, voice=selected_voice, speed=selected_speed, keep_audio)
     
     download_button.on_click(on_download_click)
     run_button.on_click(on_run_click)
@@ -273,6 +281,7 @@ def launch_dashboard():
         subfolder_input,
         voice_select,
         speed_slider,
+        keep_audio_checkbox,
         widgets.HTML("<hr style='margin: 10px 0;'/><h4>🎬 Dubbing Queue (Video, Subtitle)</h4>"),
         queue_rows_container,
         queue_controls,
