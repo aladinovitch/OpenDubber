@@ -53,7 +53,7 @@ def stream_process(cmd, prefix=""):
     process.wait()
     return process.returncode
 
-def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
+def batchdub(track_list, work_dir, voice="am_liam", speed=1.0, keep_audio=False):
     total = len(track_list)
 
     for idx, (video_filename, srt_filename) in enumerate(tqdm(track_list, desc="Overall Batch"), start=1):
@@ -101,7 +101,7 @@ def batchdub(track_list, work_dir, voice="am_liam", speed=1.0):
 
         if ffmpeg_code == 0:
             print(f"✅ Successfully created MP4: {output_video.name}\n", flush=True)
-            if output_audio.exists():
+            if not keep_audio and output_audio.exists():
                 output_audio.unlink()
         else:
             print(f"❌ FFmpeg remuxing failed for {video_filename}\n", flush=True)
