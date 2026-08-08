@@ -63,7 +63,7 @@ def batchdub(track_list, work_dir, voice="am_liam", speed=1.0, keep_audio=False)
         input_video = work_dir / video_filename
         input_srt = work_dir / srt_filename
         video_stem = Path(video_filename).stem
-        output_audio = work_dir / f"{video_stem}_synced.wav"
+        output_audio = work_dir / f"[En dub] {video_stem}.wav"
         output_video = work_dir / f"[En dub] {video_stem}.mp4"
 
         # STEP 1: Run autodub.py (TTS)
