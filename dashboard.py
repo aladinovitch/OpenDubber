@@ -237,7 +237,6 @@ def launch_dashboard():
                 s_val = row.children[1].value.strip()
                 if v_val and s_val:
                     dub_queue.append((v_val, s_val))
-            print(f"🎯 Preparing Dubbing Queue...", flush=True)
             print(f" 🗣️ Voice: {selected_voice} | Speed: {selected_speed}x", flush=True)
             print(f" 📋 Queue Items ({len(dub_queue)}):", flush=True)
             for idx, (vid, srt) in enumerate(dub_queue, 1):
